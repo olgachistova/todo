@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const db = require('./persistence/sqlite'); // Обновляем путь к sqlite.js
+const db = require('./persistence');
 const getItems = require('./routes/getItems');
 const addItem = require('./routes/addItem');
 const updateItem = require('./routes/updateItem');
@@ -14,15 +14,13 @@ app.post('/items', addItem);
 app.put('/items/:id', updateItem);
 app.delete('/items/:id', deleteItem);
 
-// Инициализация базы данных перед запуском сервера
 db.init().then(() => {
     app.listen(3000, () => console.log('Listening on port 3000'));
 }).catch((err) => {
-    console.error('Database initialization failed:', err);
+    console.error(err);
     process.exit(1);
 });
 
-// Завершение соединения с базой данных при завершении работы
 const gracefulShutdown = () => {
     db.teardown()
         .catch(() => {})
